@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -27,10 +29,13 @@ public class User {
     @Column(name = "password", nullable = false, length = 22)
     private String password;
 
-    public User (String userName , Long nationalCode , String birthday){
-        this.userName=userName;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    List<Article> articles = new ArrayList<>();
+
+    public User(String userName, Long nationalCode, String birthday) {
+        this.userName = userName;
         this.nationalCode = nationalCode;
-        this.birthday=birthday;
+        this.birthday = birthday;
         this.password = String.valueOf(nationalCode);
     }
 

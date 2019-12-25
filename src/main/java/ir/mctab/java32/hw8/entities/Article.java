@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "Article")
@@ -25,21 +24,36 @@ public class Article {
     @Column(name = "brief", nullable = false, length = 80)
     private String brief;
 
-    @Column(name = "content", nullable = false, length = 22)
+    @Column(name = "content", nullable = false, length = 100)
     private String content;
 
     @Column(name = "createDate", nullable = false, length = 22)
     private String createDate;
 
-    @Column(name = "lastUpdate", nullable = false, length = 22)
+    @Column(name = "lastUpdate", nullable = true, length = 22)
     private String lastUpdateDate;
 
-    @Column(name = "publishDate", nullable = false, length = 22)
+    @Column(name = "publishDate", nullable = true, length = 22)
     private String publishDate;
 
     @Column(name = "isPublish", nullable = false)
     private boolean isPublish;
 
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Category category;
+
+    public Article(String title, String brief, String content, String createDate, boolean isPublish, User user, Category category) {
+        this.title = title;
+        this.brief = brief;
+        this.content = content;
+        this.createDate = createDate;
+        this.isPublish = isPublish;
+        this.user = user;
+        this.category = category;
+    }
 }
 
 

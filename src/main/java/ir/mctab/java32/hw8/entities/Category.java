@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,5 +24,8 @@ public class Category {
 
     @Column(name = "description", nullable = false, length = 88)
     private String description;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    List<Article> articles = new ArrayList<>();
 
 }
