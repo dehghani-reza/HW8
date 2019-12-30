@@ -25,7 +25,15 @@ public class Category {
     @Column(name = "description", nullable = false, length = 88)
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    List<Article> articles = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+//    List<Article> articles = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

@@ -39,6 +39,14 @@ public class User {
         this.password = String.valueOf(nationalCode);
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
+
 }
 
 

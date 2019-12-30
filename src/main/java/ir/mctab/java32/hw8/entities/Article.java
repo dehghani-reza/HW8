@@ -54,6 +54,7 @@ public class Article {
         this.user = user;
         this.category = category;
     }
+
 }
 
 

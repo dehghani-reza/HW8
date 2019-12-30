@@ -43,6 +43,9 @@
             <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.webjars.npm/ansi-reset -->
+
+
     </dependencies>
 
 </project>
