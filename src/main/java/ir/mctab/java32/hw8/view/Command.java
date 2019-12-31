@@ -18,7 +18,7 @@ public class Command {
         } else {
             System.out.println(Color.ANSI_BLUE+"showAllArticle: 3 | changing pass: 4 | see all of your article: 5"
                     +Color.ANSI_CYAN+
-                    "\ncostume article: 6 | new article: 7 | publish article: 8 | exit: 9"
+                    "\ncostume article: 6 | new article: 7 | publish article: 8 | exit: 9 | signOut: 10"
                     +Color.ANSI_RESET);
         }
     }
