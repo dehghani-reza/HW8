@@ -1,10 +1,12 @@
 package ir.mctab.java32.hw8;
 
 import ir.mctab.java32.hw8.config.hibernate.HibernateUtil;
+import ir.mctab.java32.hw8.config.log4j.Log4j;
 import ir.mctab.java32.hw8.entities.*;
 import ir.mctab.java32.hw8.view.Color;
 import ir.mctab.java32.hw8.view.Command;
 import ir.mctab.java32.hw8.view.Remote;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -17,19 +19,27 @@ import java.util.Scanner;
 
 public class ArticleApp {
     public static void main(String[] args) {
+        //scanner for int and string
         Scanner scanner = new Scanner(System.in);
         Scanner scannerInt = new Scanner(System.in);
 
-
+        //hibernate session
         SessionFactory sessionFactory = HibernateUtil.getSession();
         Session session = sessionFactory.openSession();
 
+        //git address
+        System.out.println("git address: https://github.com/dehghani-reza/HW8");
+
+        //logging
+        Logger logger = Log4j.getLogger();
+
+        //all that need for app in classes
         User user = null;
         Command command = new Command();
         int inputCommand = 0;
         Remote remote = new Remote(session);
 
-        System.out.println("git address: https://github.com/dehghani-reza/HW8");
+logger.info("application going to start at: "+DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
         do {
             session.beginTransaction();
             command.setUser(user);
@@ -38,7 +48,7 @@ public class ArticleApp {
                 inputCommand = scannerInt.nextInt();
                 command.commandCheck(inputCommand);
             } catch (InputMismatchException e) {
-                System.out.println(Color.ANSI_RED+"wrong type of command"+Color.ANSI_RESET);
+                System.out.println(Color.ANSI_RED + "wrong type of command" + Color.ANSI_RESET);
                 scannerInt = new Scanner(System.in);
                 session.getTransaction().rollback();
                 continue;
@@ -54,6 +64,7 @@ public class ArticleApp {
                     user = remote.loginCommand(scanner, user);
                     if (user == null) {
                         System.out.println(Color.ANSI_PURPLE + "Wrong Username or Password" + Color.ANSI_GREEN + "\ntry again...." + Color.ANSI_RESET);
+                        logger.error("failed to login at: "+DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
                         session.getTransaction().rollback();
                         continue;
                     }
@@ -72,51 +83,57 @@ public class ArticleApp {
                     try {
                         remote.showAllArticle(scannerInt);
                     } catch (Exception e) {
-                        System.out.println(Color.ANSI_RED+e.getMessage()+Color.ANSI_RESET);
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
                         session.getTransaction().rollback();
                         continue;
                     }
                     break;
                 case 4:
-                    remote.changePasswprd(scanner,user);
+                    remote.changePasswprd(scanner, user);
                     break;
                 case 5:
                     try {
                         remote.userArticle(user);
                     } catch (Exception e) {
-                        System.out.println(Color.ANSI_RED+e.getMessage()+Color.ANSI_RESET);
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
                         session.getTransaction().commit();
                         continue;
                     }
                     break;
                 case 6:
                     try {
-                        remote.cotumeArticle(scanner,scannerInt,user);
+                        remote.cotumeArticle(scanner, scannerInt, user);
                     } catch (Exception e) {
-                        System.out.println(Color.ANSI_RED+e.getMessage()+Color.ANSI_RESET);
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
                         session.getTransaction().rollback();
                         continue;
                     }
                     break;
                 case 7:
                     try {
-                        remote.nawArticle(scanner,scannerInt,user);
+                        remote.nawArticle(scanner, scannerInt, user);
                     } catch (Exception e) {
-                        System.out.println(Color.ANSI_RED+e.getMessage()+Color.ANSI_RESET);
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
                         session.getTransaction().rollback();
                         continue;
                     }
                     break;
                 case 8:
                     try {
-                        remote.publishArticle(scannerInt,user);
+                        remote.publishArticle(scannerInt, user);
                     } catch (Exception e) {
-                        System.out.println(Color.ANSI_RED+e.getMessage()+Color.ANSI_RESET);
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
                         session.getTransaction().rollback();
                         continue;
                     }
                     break;
                 case 10:
+                    logger.info(user.toString()+" sign out at: "+DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
                     user = null;
                     break;
 
@@ -124,7 +141,7 @@ public class ArticleApp {
             }
             session.getTransaction().commit();
         } while (inputCommand != 9);
-
+        logger.info("app ended at : "+DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
         System.out.println("have a nice day .....");
 
 

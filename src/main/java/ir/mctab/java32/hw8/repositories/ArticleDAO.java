@@ -2,6 +2,7 @@ package ir.mctab.java32.hw8.repositories;
 
 import ir.mctab.java32.hw8.entities.Article;
 import ir.mctab.java32.hw8.entities.Category;
+import ir.mctab.java32.hw8.entities.Tag;
 import ir.mctab.java32.hw8.entities.User;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -64,5 +65,10 @@ public class ArticleDAO {
         Query<Article> query5 = session.createQuery("From Article where isPublish = false and user_id=" + user.getId());
         List<Article> articles2 = query5.list();
         return articles2;
+    }
+
+    public void addTag (Tag tag , Article article){
+        article.getTagSet().add(tag);
+        session.update(article);
     }
 }

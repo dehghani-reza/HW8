@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -32,6 +34,12 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     List<Article> articles = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "User_Rols"
+            , joinColumns = @JoinColumn(name = "User_Id")
+            , inverseJoinColumns = @JoinColumn(name = "Role_Id"))
+    Set<Role> roles = new HashSet<>();
 
     public User(String userName, Long nationalCode, String birthday) {
         this.userName = userName;

@@ -1,23 +1,26 @@
 package ir.mctab.java32.hw8.view;
 
 
+import ir.mctab.java32.hw8.config.log4j.Log4j;
 import ir.mctab.java32.hw8.entities.Article;
 import ir.mctab.java32.hw8.entities.Category;
 import ir.mctab.java32.hw8.entities.User;
 import ir.mctab.java32.hw8.repositories.ArticleDAO;
 import ir.mctab.java32.hw8.repositories.CategoryDAO;
 import ir.mctab.java32.hw8.repositories.UserDAO;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
+
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
 public class Remote {
+    Logger logger = Log4j.getLoggerRemote();
 
     Session session;
     UserDAO userDAO = new UserDAO();
@@ -41,6 +44,7 @@ public class Remote {
         System.out.println("Enter your password");
         String password = scanner.nextLine();
         user = userDAO.loginUser(username, password, user);
+        logger.info("with username: " + username + " and password: " + password + " try to login at: " + DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
         return user;
     }
 
@@ -58,8 +62,10 @@ public class Remote {
         if (nationalId < 10000000 || nationalId > 99999999) {
             throw new Exception(Color.ANSI_RED + "Bad NationalCode please write correct" + Color.ANSI_RESET);
         }
+        logger.info("with username: " + username + " birthday: " + birthday + " some body try to sign up");
         User user = userDAO.signup(username, nationalId, birthday);
-        System.out.println("user " + user.getUserName() + " with id " + user.getId() + " has been created" + "\nremember your default pass is your nationalNumber");
+        System.out.println("user " + user.getUserName() + " with id " + user.getId() + " has been created"
+                + "\nremember your default pass is your nationalNumber");
         return user;
     }
 
@@ -91,6 +97,7 @@ public class Remote {
         user.setPassword(pass);
         userDAO.changiPassword(user, pass);
         System.out.println(Color.ANSI_GREEN + "your password changed" + Color.ANSI_RESET);
+        logger.info(user.toString() + "changed password");
     }
 
     //5
@@ -121,8 +128,9 @@ public class Remote {
         }
         return article;
     }
+
     //7
-    public void nawArticle(Scanner scanner , Scanner scannerInt , User user) throws Exception{
+    public void nawArticle(Scanner scanner, Scanner scannerInt, User user) throws Exception {
         System.out.println("please enter brief of your article: ");
         String brief = scanner.nextLine();
         System.out.println("please enter content of your article: ");
@@ -140,26 +148,28 @@ public class Remote {
             System.out.println("Enter category id: ");
             Long categoryId = scannerInt.nextLong();
             category = categoryDAO.loadCategory(categoryId);
-        }else if (categoryChoose == 0) {
+        } else if (categoryChoose == 0) {
             System.out.println("Enter Title of this category");
             String title1 = scanner.nextLine();
             System.out.println("Enter description of your category");
             String description = scanner.nextLine();
-            category = categoryDAO.addCategory(title1,description);
-        }else {
+            category = categoryDAO.addCategory(title1, description);
+        } else {
             throw new Exception("wrong command");
         }
         Article article = articleDAO.saveArticle(title, brief, content, isPublish, user, category);
-        System.out.println("Article with "+Color.ANSI_YELLOW+"id: "+Color.ANSI_RESET+article.getId()+" has been created");
+        System.out.println("Article with " + Color.ANSI_YELLOW + "id: " + Color.ANSI_RESET + article.getId() + " has been created");
+        logger.info(article.toString() + "has been created at: " + DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
     }
+
     //8
-    public void publishArticle(Scanner scannerInt , User user) throws Exception{
+    public void publishArticle(Scanner scannerInt, User user) throws Exception {
         List<Article> articles2 = articleDAO.loadPublishArticle(user);
         articles2.forEach(System.out::println);
         System.out.println("choose article which you want to publish ");
         Long publishId = scannerInt.nextLong();
-        articleDAO.publishArticle(user,publishId);
-        System.out.println(Color.ANSI_GREEN+"your article published"+Color.ANSI_RESET);
+        articleDAO.publishArticle(user, publishId);
+        System.out.println(Color.ANSI_GREEN + "your article published" + Color.ANSI_RESET);
     }
 
 }

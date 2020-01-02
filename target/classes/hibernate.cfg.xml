@@ -23,6 +23,8 @@
         <mapping class="ir.mctab.java32.hw8.entities.Category" />
         <mapping class="ir.mctab.java32.hw8.repositories.UserDAO" />
         <mapping class="ir.mctab.java32.hw8.view.Remote" />
+        <mapping class="ir.mctab.java32.hw8.entities.Role"/>
+        <mapping class="ir.mctab.java32.hw8.entities.Tag"/>
 
     </session-factory>
 </hibernate-configuration>

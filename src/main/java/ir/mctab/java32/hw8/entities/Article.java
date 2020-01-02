@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -44,6 +45,12 @@ public class Article {
 
     @ManyToOne
     private Category category;
+
+    @ManyToMany
+    @JoinTable(name = "Article_Tags"
+            , joinColumns = @JoinColumn(name = "Article_Id")
+            , inverseJoinColumns = @JoinColumn(name = "Tag_Id"))
+    private Set<Tag> tagSet;
 
     public Article(String title, String brief, String content, String createDate, boolean isPublish, User user, Category category) {
         this.title = title;

@@ -1,11 +1,13 @@
 package ir.mctab.java32.hw8.repositories;
 
 import ir.mctab.java32.hw8.entities.Article;
+import ir.mctab.java32.hw8.entities.Role;
 import ir.mctab.java32.hw8.view.Color;
 import ir.mctab.java32.hw8.entities.User;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class UserDAO {
@@ -28,6 +30,9 @@ public class UserDAO {
             throw new Exception(Color.ANSI_RED+"this user name is reserved"+Color.ANSI_RESET);
         }
         User user = new User(username, nationalId, birthday);
+        Query<Role> query1 = session.createQuery("From Role where  roleName = 'Writer' ");
+        Role role = query1.uniqueResult();
+        user.getRoles().add(role);
         session.save(user);
         return user;
     }
