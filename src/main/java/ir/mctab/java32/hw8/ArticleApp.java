@@ -136,7 +136,49 @@ logger.info("application going to start at: "+DateTimeFormatter.ofPattern("yyyy/
                     logger.info(user.toString()+" sign out at: "+DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
                     user = null;
                     break;
-
+                case 11:
+                    try {
+                        remote.repealPublish(scannerInt);
+                    }catch (Exception e){
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
+                        session.getTransaction().rollback();
+                        continue;
+                    }
+                    break;
+                case 12:
+                    try {
+                        remote.createCategory(scanner);
+                    } catch (Exception e) {
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
+                        session.getTransaction().rollback();
+                        continue;
+                    }
+                    break;
+                case 13:
+                    try {
+                        remote.createTag(scanner);
+                    } catch (Exception e) {
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
+                        session.getTransaction().rollback();
+                        continue;
+                    }
+                    break;
+                case 14:
+                    try {
+                        remote.deleteArticle(scannerInt);
+                    } catch (Exception e) {
+                        System.out.println(Color.ANSI_RED + e.getMessage() + Color.ANSI_RESET);
+                        logger.error(user.toString()+" get this error: "+e.getMessage());
+                        session.getTransaction().rollback();
+                        continue;
+                    }
+                    break;
+                case 15:
+                    remote.changeRole(scannerInt);
+                    break;
 
             }
             session.getTransaction().commit();

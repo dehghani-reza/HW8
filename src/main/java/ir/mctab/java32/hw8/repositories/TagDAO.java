@@ -16,7 +16,11 @@ public class TagDAO {
         this.session = session;
     }
 
-    public Tag createTeg(String name) {
+    public Tag createTeg(String name) throws Exception{
+        List<Tag> tags = loadAllTas();
+        if(tags.stream().anyMatch(tag -> tag.getTagName().equals(name))){
+            throw new Exception("this tag name already exist");
+        }
         Tag tag = new Tag();
         tag.setTagName(name);
         session.save(tag);

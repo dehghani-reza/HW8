@@ -9,6 +9,7 @@ import org.hibernate.query.Query;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserDAO {
     Session session;
@@ -17,17 +18,17 @@ public class UserDAO {
         this.session = session;
     }
 
-    public User loginUser(String username, String password, User user){
-        Query<User> query = session.createQuery("FROM User where userName = '" + username + "' and password = '" + password+"'");
+    public User loginUser(String username, String password, User user) {
+        Query<User> query = session.createQuery("FROM User where userName = '" + username + "' and password = '" + password + "'");
         user = query.uniqueResult();
         return user;
     }
 
-    public User signup(String username, Long nationalId, String birthday) throws Exception{
+    public User signup(String username, Long nationalId, String birthday) throws Exception {
         Query<User> query = session.createQuery("From User ");
         List<User> users = query.list();
-        if(users.stream().anyMatch(p-> p.getUserName().equals(username))){
-            throw new Exception(Color.ANSI_RED+"this user name is reserved"+Color.ANSI_RESET);
+        if (users.stream().anyMatch(p -> p.getUserName().equals(username))) {
+            throw new Exception(Color.ANSI_RED + "this user name is reserved" + Color.ANSI_RESET);
         }
         User user = new User(username, nationalId, birthday);
         Query<Role> query1 = session.createQuery("From Role where  roleName = 'Writer' ");
@@ -37,17 +38,34 @@ public class UserDAO {
         return user;
     }
 
-    public void changiPassword(User user , String pass){
+    public void changiPassword(User user, String pass) {
         user = session.load(User.class, user.getId());
         user.setPassword(pass);
+        session.update(user);
     }
 
-    public List userArticle(User user) throws Exception{
+    public List userArticle(User user) throws Exception {
         Query<Article> query2 = session.createQuery("From Article where user_id = " + user.getId());
         List<Article> articles1 = query2.list();
-        if(articles1.isEmpty()){
+        if (articles1.isEmpty()) {
             throw new Exception("you have no article");
         }
         return articles1;
+    }
+
+    public List<User> loadWriter() {
+        Query<User> query = session.createQuery("From User");
+        Query<Role> query1 = session.createQuery("From Role where  roleName = 'Writer' ");
+        Role role = query1.uniqueResult();
+        List<User> users = query.list().stream().filter(user -> user.getRoles().contains(role)).collect(Collectors.toList());
+        return users;
+    }
+
+    public void addRole(Long id) {
+        User user = session.load(User.class, id);
+        Query<Role> query1 = session.createQuery("From Role where  roleName = 'Admin' ");
+        Role role = query1.uniqueResult();
+        user.getRoles().add(role);
+        session.update(user);
     }
 }

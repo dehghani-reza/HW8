@@ -2,11 +2,10 @@ package ir.mctab.java32.hw8.view;
 
 
 import ir.mctab.java32.hw8.config.log4j.Log4j;
-import ir.mctab.java32.hw8.entities.Article;
-import ir.mctab.java32.hw8.entities.Category;
-import ir.mctab.java32.hw8.entities.User;
+import ir.mctab.java32.hw8.entities.*;
 import ir.mctab.java32.hw8.repositories.ArticleDAO;
 import ir.mctab.java32.hw8.repositories.CategoryDAO;
+import ir.mctab.java32.hw8.repositories.TagDAO;
 import ir.mctab.java32.hw8.repositories.UserDAO;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -15,9 +14,11 @@ import org.hibernate.Session;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Remote {
     Logger logger = Log4j.getLoggerRemote();
@@ -26,6 +27,7 @@ public class Remote {
     UserDAO userDAO = new UserDAO();
     ArticleDAO articleDAO = new ArticleDAO();
     CategoryDAO categoryDAO = new CategoryDAO();
+    TagDAO tagDAO = new TagDAO();
 
     //*********************************************
     public Remote(Session session) {
@@ -33,6 +35,7 @@ public class Remote {
         userDAO.setSession(session);
         articleDAO.setSession(session);
         categoryDAO.setSession(session);
+        tagDAO.setSession(session);
     }
 
     //*********************************************
@@ -130,7 +133,7 @@ public class Remote {
     }
 
     //7
-    public void nawArticle(Scanner scanner, Scanner scannerInt, User user) throws Exception {
+    public void nawArticle(Scanner scanner, Scanner scannerInt, User user) {
         System.out.println("please enter brief of your article: ");
         String brief = scanner.nextLine();
         System.out.println("please enter content of your article: ");
@@ -141,22 +144,9 @@ public class Remote {
         System.out.println("here is list of category: ");
         List<Category> categories = categoryDAO.categoryList();
         categories.forEach(System.out::println);
-        System.out.println("for choosing press 1 and for adding category press 0");
-        int categoryChoose = scannerInt.nextInt();
-        Category category = null;
-        if (categoryChoose == 1) {
-            System.out.println("Enter category id: ");
-            Long categoryId = scannerInt.nextLong();
-            category = categoryDAO.loadCategory(categoryId);
-        } else if (categoryChoose == 0) {
-            System.out.println("Enter Title of this category");
-            String title1 = scanner.nextLine();
-            System.out.println("Enter description of your category");
-            String description = scanner.nextLine();
-            category = categoryDAO.addCategory(title1, description);
-        } else {
-            throw new Exception("wrong command");
-        }
+        System.out.println("Enter category id: ");
+        Long categoryId = scannerInt.nextLong();
+        Category category = categoryDAO.loadCategory(categoryId);
         Article article = articleDAO.saveArticle(title, brief, content, isPublish, user, category);
         System.out.println("Article with " + Color.ANSI_YELLOW + "id: " + Color.ANSI_RESET + article.getId() + " has been created");
         logger.info(article.toString() + "has been created at: " + DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
@@ -170,6 +160,55 @@ public class Remote {
         Long publishId = scannerInt.nextLong();
         articleDAO.publishArticle(user, publishId);
         System.out.println(Color.ANSI_GREEN + "your article published" + Color.ANSI_RESET);
+    }
+
+    //11
+    public void repealPublish(Scanner scannerInt) {
+        List<Article> articles = articleDAO.showAllArticle();
+        List<Article> articleList = articles.stream().filter(Article::isPublish).collect(Collectors.toList());
+        articleList.forEach(System.out::println);
+        System.out.println("please enter id of your article which you want to repeal the publish status: ");
+        Long id = scannerInt.nextLong();
+        Article article = articleDAO.repealArticle(id);
+        System.out.println(article);
+    }
+
+    //12
+    public Category createCategory(Scanner scanner) throws Exception {
+        System.out.println("Enter Title of this category");
+        String title1 = scanner.nextLine();
+        System.out.println("Enter description of your category");
+        String description = scanner.nextLine();
+        Category category = categoryDAO.addCategory(title1, description);
+        return category;
+    }
+
+    //13
+    public Tag createTag(Scanner scanner) throws Exception {
+        System.out.println("please enter tag name: ");
+        String name = scanner.nextLine();
+        Tag tag = tagDAO.createTeg(name);
+        return tag;
+    }
+
+    //14
+    public void deleteArticle(Scanner scannerInt) throws Exception {
+        showAllArticle(scannerInt);
+        System.out.println("please enter id of article which you want to delete: ");
+        Long id = scannerInt.nextLong();
+        articleDAO.deleteArticle(id);
+        System.out.println("article with id: " + Color.ANSI_YELLOW + id + Color.ANSI_RESET + " has been deleted");
+    }
+
+    //15
+    public void changeRole(Scanner scannerInt) {
+        List<User> users = userDAO.loadWriter();
+        users.forEach(user -> System.out.println(Color.ANSI_YELLOW + "ID: " + Color.ANSI_RESET + user.getId()
+                + Color.ANSI_YELLOW + " username: " + Color.ANSI_RESET + user.getUserName()
+                +Color.ANSI_YELLOW+" role: " +Color.ANSI_RESET+user.getRoles().stream().map(Role::getRoleName).collect(Collectors.joining())));
+        System.out.println("which user you want to promote enter id of that user: ");
+        Long id = scannerInt.nextLong();
+        userDAO.addRole(id);
     }
 
 }
