@@ -64,7 +64,7 @@ logger.info("application going to start at: "+DateTimeFormatter.ofPattern("yyyy/
                     user = remote.loginCommand(scanner, user);
                     if (user == null) {
                         System.out.println(Color.ANSI_PURPLE + "Wrong Username or Password" + Color.ANSI_GREEN + "\ntry again...." + Color.ANSI_RESET);
-                        logger.error("failed to login at: "+DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
+                        logger.error("failed to login");
                         session.getTransaction().rollback();
                         continue;
                     }

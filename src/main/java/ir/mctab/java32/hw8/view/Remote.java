@@ -14,10 +14,7 @@ import org.hibernate.Session;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Remote {
@@ -147,19 +144,35 @@ public class Remote {
         System.out.println("Enter category id: ");
         Long categoryId = scannerInt.nextLong();
         Category category = categoryDAO.loadCategory(categoryId);
-        Article article = articleDAO.saveArticle(title, brief, content, isPublish, user, category);
+        //*******tag***********
+        List<Tag> tagList = tagDAO.loadAllTas();
+        Set<Tag> articleTags = new HashSet<>();
+        int tagCommand = -1;
+        while(tagCommand!=0) {
+            if(articleTags.size()>5 || articleTags.size()==tagList.size())break;
+            tagList.stream().filter(tag-> !articleTags.contains(tag)).forEach(System.out::println);
+            System.out.println("if you want to add more tag enter 1 and if you dont enter 0 ");
+            tagCommand = scannerInt.nextInt();
+            if(tagCommand!=1 && tagCommand!=0){
+                System.out.println(Color.ANSI_RED+"Wrong command"+Color.ANSI_RESET);
+                continue;
+            }
+            System.out.println("please enter  your tag id which you want to add: ");
+            articleTags.add(tagDAO.findById(scannerInt.nextLong()));
+        }
+        Article article = articleDAO.saveArticle(title, brief, content, isPublish, user, category , articleTags);
         System.out.println("Article with " + Color.ANSI_YELLOW + "id: " + Color.ANSI_RESET + article.getId() + " has been created");
         logger.info(article.toString() + "has been created at: " + DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
     }
 
     //8
     public void publishArticle(Scanner scannerInt, User user) throws Exception {
-        List<Article> articles2 = articleDAO.loadPublishArticle(user);
+        List<Article> articles2 = articleDAO.loadPublishArticle();
         articles2.forEach(System.out::println);
         System.out.println("choose article which you want to publish ");
         Long publishId = scannerInt.nextLong();
         articleDAO.publishArticle(user, publishId);
-        System.out.println(Color.ANSI_GREEN + "your article published" + Color.ANSI_RESET);
+        System.out.println(Color.ANSI_GREEN + "article published" + Color.ANSI_RESET);
     }
 
     //11
@@ -188,6 +201,7 @@ public class Remote {
         System.out.println("please enter tag name: ");
         String name = scanner.nextLine();
         Tag tag = tagDAO.createTeg(name);
+        System.out.println(Color.ANSI_GREEN+"tag with name: "+name+" created"+Color.ANSI_RESET);
         return tag;
     }
 
@@ -206,7 +220,7 @@ public class Remote {
         users.forEach(user -> System.out.println(Color.ANSI_YELLOW + "ID: " + Color.ANSI_RESET + user.getId()
                 + Color.ANSI_YELLOW + " username: " + Color.ANSI_RESET + user.getUserName()
                 +Color.ANSI_YELLOW+" role: " +Color.ANSI_RESET+user.getRoles().stream().map(Role::getRoleName).collect(Collectors.joining())));
-        System.out.println("which user you want to promote enter id of that user: ");
+        System.out.println("which user you want to promote or demote enter id of that user: ");
         Long id = scannerInt.nextLong();
         userDAO.addRole(id);
     }

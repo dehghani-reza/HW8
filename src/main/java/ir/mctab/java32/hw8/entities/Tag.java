@@ -2,8 +2,10 @@ package ir.mctab.java32.hw8.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -19,7 +21,7 @@ public class Tag {
     @Column(nullable = false, length = 20)
     private String tagName;
 
-    @ManyToMany(mappedBy = "tagSet")
+    @ManyToMany(mappedBy = "tagSet" ,fetch = FetchType.LAZY)
     private Set<Article> articles;
 
     @Override
@@ -28,5 +30,18 @@ public class Tag {
                 "id=" + id +
                 ", tagName='" + tagName + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(getId(), tag.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

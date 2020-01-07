@@ -62,6 +62,22 @@ public class Article {
         this.category = category;
     }
 
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", brief='" + brief + '\'' +
+                ", content='" + content + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", lastUpdateDate='" + lastUpdateDate + '\'' +
+                ", publishDate='" + publishDate + '\'' +
+                ", isPublish=" + isPublish +
+                ", user=" + user +
+                ", category=" + category +
+                ", tagSet=" + tagSet +
+                '}';
+    }
 }
 
 

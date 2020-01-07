@@ -24,7 +24,7 @@ public class Command {
                     + Color.ANSI_CYAN
                     + "\ncostume article: 6 | new article: 7 | publish article: 8 | exit: 9 | signOut: 10"
                     + Color.ANSI_RESET
-                    + "\nrepeal publish:11 | create category:12 | create tag:13 | delete Article:14 | change role:15 "
+                    + "\nrepeal publish:11 | create category:12 | create tag:13 | delete Article:14 "
                     + Color.ANSI_RESET);
         } else if (user.getRoles().stream().anyMatch(p -> p.getRoleName().equals("Writer"))) {
             System.out.println(Color.ANSI_BLUE + "changing pass: 4 | see all of your article: 5"
@@ -36,6 +36,9 @@ public class Command {
                     + Color.ANSI_CYAN +
                     "\npublish article: 8 | repeal publish:11 | create category:12 | create tag:13 | delete Article:14"
                     + Color.ANSI_RESET);
+        }
+        if(user!=null && user.getRoles().stream().noneMatch(role -> role.getRoleName().equals("Writer"))){
+            System.out.println(Color.ANSI_RED+"Change Role: 15"+Color.ANSI_RESET);
         }
     }
 
@@ -54,6 +57,9 @@ public class Command {
         }
         if (this.user != null && (user.getRoles().stream().noneMatch(p -> p.getRoleName().equals("Admin"))) && (!(commandInput == 4 || commandInput == 5 || commandInput == 6 || commandInput == 7 || commandInput == 9 || commandInput == 10))) {
             throw new RuntimeException("Only admin can do this command");
+        }
+        if((user!=null && user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("Writer")))&& commandInput==15){
+            throw new RuntimeException(Color.ANSI_PURPLE+"Only Super admin can do this command"+Color.ANSI_RESET);
         }
     }
 }

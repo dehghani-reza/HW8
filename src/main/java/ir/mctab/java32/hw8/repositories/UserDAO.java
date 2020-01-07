@@ -63,9 +63,18 @@ public class UserDAO {
 
     public void addRole(Long id) {
         User user = session.load(User.class, id);
-        Query<Role> query1 = session.createQuery("From Role where  roleName = 'Admin' ");
-        Role role = query1.uniqueResult();
-        user.getRoles().add(role);
-        session.update(user);
+        if(user.getRoles().stream().anyMatch(role -> role.getRoleName().equals("Admin"))){
+            Query<Role> query1 = session.createQuery("From Role where  roleName = 'Admin' ");
+            Role role = query1.uniqueResult();
+            user.getRoles().remove(role);
+            session.update(user);
+            System.out.println("user with"+Color.ANSI_YELLOW+" ID: "+Color.ANSI_RESET+user.getId()+Color.ANSI_RED+" demoted"+Color.ANSI_RESET);
+        } else {
+            Query<Role> query1 = session.createQuery("From Role where  roleName = 'Admin' ");
+            Role role = query1.uniqueResult();
+            user.getRoles().add(role);
+            session.update(user);
+            System.out.println("user with"+Color.ANSI_YELLOW+" ID: "+Color.ANSI_RESET+user.getId()+Color.ANSI_GREEN+" promoted"+Color.ANSI_RESET);
+        }
     }
 }
